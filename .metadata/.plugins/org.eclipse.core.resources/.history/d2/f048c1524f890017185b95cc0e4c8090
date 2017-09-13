@@ -1,0 +1,69 @@
+package com.test;
+
+import java.util.Scanner;
+
+public class Vendingmachine {
+	//private int stockc,stockp,stocks;
+	private int one,five,ten,tfive;
+	private int selection;
+	item coke=new item("coke",25,1);
+	item pepsi=new item("pepsi",35,2);
+	item soda=new item("soda",45,3);
+	public void dispmenu(){
+		
+		System.out.println("Vending machine\n\nPlease make a selection");
+		System.out.println(coke.print()+"\n"+pepsi.print()+"\n"+soda.print()+"\n"+ "0.I'm the supplier\n\nPress q to exit");
+		selection=userin();
+		//System.out.println(printsel());
+	}
+	public static int userin(){
+		String ch;
+		Scanner sc=new Scanner(System.in);
+		ch=sc.nextLine();
+		sc.close();
+		if(ch.equalsIgnoreCase("Q"))
+		{
+			System.exit(0);
+		}
+		return (int)Integer.parseInt(ch);
+		
+		
+	}
+	public String printsel(){
+		switch(selection){
+		case 1:{
+			return "Coke";
+			}
+		case 2:{
+			return "Pepsi";
+			}
+		case 3:{
+			return "Soda";
+			}
+		default:
+			return"Invalid";
+		}
+	}
+	public void cashin(){
+		System.out.println("You have ");
+		
+	}
+
+
+class item{
+	public String name =new String();
+	public int cost;
+	public int stock;
+	public int serno;
+	public String print(){
+		return (serno+"."+name+"("+cost+")");
+	}
+	
+	public item(String s, int c,int st){
+		name=s;
+		cost=c;
+		serno=st;
+	}
+	
+}
+}

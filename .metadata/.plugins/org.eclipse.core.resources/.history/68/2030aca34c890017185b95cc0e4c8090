@@ -1,0 +1,30 @@
+package com.test;
+
+import java.util.Scanner;
+
+public class Vendingmachine {
+	private int stockc,stockp,stocks;
+	private int one,five,ten,tfive;
+	private int selection;
+	public void dispmenu(){
+		
+		System.out.println("Vending machine\n\nPlease make a selection");
+		System.out.println("1.Coke (25)\n2.Pepsi (35)\n3.Soda (45)\n 0.I'm the supplier\n\nPress q to exit");
+		selection=userin();
+		System.out.println(selection);
+	}
+	public static int userin(){
+		String ch;
+		Scanner sc=new Scanner(System.in);
+		ch=sc.nextLine();
+		sc.close();
+		if(ch.equalsIgnoreCase("Q"))
+		{
+			System.exit(0);
+		}
+		return (int)Integer.parseInt(ch);
+		
+		
+	}
+
+}

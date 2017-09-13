@@ -1,0 +1,140 @@
+package emp_database;
+import java.sql.*;
+import java.util.*;
+
+public class Empdao {
+	private String jdbcURL;
+    private String jdbcUsername;
+    private String jdbcPassword;
+    private Connection conn;
+     
+    public Empdao(String jdbcURL, String jdbcUsername, String jdbcPassword) {
+        this.jdbcURL =jdbcURL ;
+        this.jdbcUsername = jdbcUsername;
+        this.jdbcPassword = jdbcPassword;
+    }
+    protected void connect() throws SQLException {
+        if (conn == null ||conn.isClosed()) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                throw new SQLException(e);
+            }
+            conn = DriverManager.getConnection(
+                                        jdbcURL, jdbcUsername, jdbcPassword);
+            if (conn != null) {
+		        System.out.println("Connected");
+		    }
+        }
+    }
+     
+    protected void disconnect() throws SQLException {
+        if (conn != null && !conn.isClosed()) {
+            conn.close();
+        }
+    }
+    
+    public boolean addEmployee(Emp e) throws SQLException{
+    	String sql = "INSERT INTO emp_table (emp_name,`Contact No`,emailid)  VALUES (?, ?, ?)";
+    	connect();
+		 
+		PreparedStatement statement = conn.prepareStatement(sql);
+		//statement.setString(1, Integer.toString(e.getEmp_id()));
+		statement.setString(1, e.getName());
+		statement.setString(2, e.getCno());
+		statement.setString(3, e.getMailid());
+		 
+		int rowsInserted = statement.executeUpdate();
+		
+		statement.close();
+		disconnect();
+		//conn.close();
+		if (rowsInserted > 0) {
+		    System.out.println("A new user was inserted successfully!");
+		    return true;
+		}
+		return false;
+    }
+    
+    public List<Emp> listAll() throws SQLException {
+        List<Emp> empList = new ArrayList<>();
+         
+        String sql = "SELECT * FROM emp_table";
+         
+        connect();
+         
+        Statement statement = conn.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            int id = resultSet.getInt("emp_id");
+            String name = resultSet.getString("emp_name");
+            String cno = resultSet.getString("Contact No");
+            String mid =resultSet.getString("emailid");
+             
+            Emp e= new Emp(id,name,cno,mid);
+            empList.add(e);
+            }
+         
+        resultSet.close();
+        statement.close();
+         
+        disconnect();
+        return empList;
+    }
+    public boolean deleteEmp(Emp e) throws SQLException {
+        String sql = "DELETE FROM emp_table where emp_id = ?";
+         
+        connect();
+         
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setInt(1,e.getEmp_id());         
+        boolean rowDeleted = statement.executeUpdate() > 0;
+        statement.close();
+        disconnect();
+        return rowDeleted;     
+    }
+    public Emp getEmp(int id) throws SQLException {
+        Emp e = null;
+        String sql = "SELECT * FROM Emp_table WHERE emp_id = ?";
+         
+        connect();
+         
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setInt(1, id);
+         
+        ResultSet resultSet = statement.executeQuery();
+         
+        if (resultSet.next()) {
+            String name = resultSet.getString("emp_name");
+            String cno = resultSet.getString("Contact No");
+            String mid = resultSet.getString("emailid");
+            
+             
+            e = new Emp(id, name,cno,mid);
+        }
+         
+        resultSet.close();
+        statement.close();
+         
+        return e;
+    }
+    public boolean updateEmp(Emp e) throws SQLException {
+        String sql = "UPDATE emp_table SET emp_name = ?,`Contact No`  = ?, emailid = ?";
+        sql += " WHERE emp_id = ?";
+        connect();
+         System.out.println("contact no:"+e.getCno());
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setString(1, e.getName());
+        statement.setString(2, e.getCno());
+        statement.setString(3, e.getMailid());
+        statement.setInt(4, e.getEmp_id());
+         
+        boolean rowUpdated = statement.executeUpdate() > 0;
+        statement.close();
+        disconnect();
+        return rowUpdated;     
+    }
+     
+    
+}
